@@ -1,6 +1,9 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
+import User from "@models/user";
+import { connectTODB } from "@utils/database";
+
 console.log(process.env.GOOGLE_ID, process.env.GOOGLE_CLIENT_SECRET)
 
 const handler = NextAuth({
@@ -11,16 +14,26 @@ const handler = NextAuth({
         }),
     ],
     async session({ session, user }) {
-        
+        const sessionUser = await User.findOne({ email: session.user.email });
+
+        session.user.id = sessionUser._id.toString();
+        return session;
     },
 
     async signIn({ profile }) {
         try {
-            if (profile.email.endsWith("@gmail.com")) {
-                return true;
-            } else {
-                return false;
+            await connectTODB();
+
+            const userExists = await User.findOne({ email: profile.email });
+
+            if(!userExists) {
+                await User.create({
+                    email: profile.email,
+                    username: profile.name.replace(" ", "").toLowerCase(),
+                    image: profile.picture,
+                });
             }
+            
         } catch (error) {
             console.log(error);
             return false;

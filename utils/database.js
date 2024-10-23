@@ -1,4 +1,4 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from 'mongoose';
 
 let isConnected = false;
 
@@ -12,8 +12,8 @@ export const connectTODB = async () => {
 
     try{
         await mongoose.connect(process.env.MONGODB_URI, {
-            dbName: 'share_prompt',
-            userNewUrlParser: true,
+            dbName: "share_prompt",
+            useNewUrlParser: true,
             useUnifiedTopology: true,
         });
 

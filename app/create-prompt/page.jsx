@@ -28,7 +28,6 @@ const CreatePrompt = () => {
                         prompt: post.prompt,
                         tag: post.tag,
                         userId: session?.user.id,
-                        tag: post.tag,
                     }),
                 }
             )

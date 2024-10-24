@@ -11,6 +11,10 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
   const router = useRouter();
 
   const [copied, setCopied] = useState("");
+
+  if (!post || !post.creator) {
+    return <div>Invalid post data</div>;
+  }
   
   const handleCopy = () => {
     setCopied(post.prompt);

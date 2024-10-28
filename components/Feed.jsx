@@ -18,24 +18,46 @@ const PromptCardList = ({ data, handleTagClick }) => {
   )
 }
 
-const Feed = () => {
+const Feed = ({ initialPrompts }) => {
   const [searchText, setSearchText] = useState('');
-  const [posts, setPosts] = useState([]);
+  const [prompts, setPrompts] = useState(initialPrompts || []);
+  const [error, setError] = useState(null);
+  const [filteredPrompts, setFilteredPrompts] = useState(initialPrompts || []);
 
   const handleSearchChange = (e) => {
-    setSearchText(e.target.value);
+    const text = e.target.value.toLowerCase();
+        setSearchText(text);
+
+        // Filter posts based on searchText
+        const filtered = prompts.filter((prompt) => 
+          prompt.creator.username.toLowerCase().includes(text) ||
+          prompt.tag.toLowerCase().includes(text) ||
+          prompt.prompt.toLowerCase().includes(text)
+        );
+        setFilteredPrompts(filtered);
   }
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      const response = await fetch('/api/prompt');
-      const data = await response.json();
+        const fetchPrompts = async () => {
+            try {
+                const response = await fetch('/api/prompt');
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch prompts: ${response.statusText}`);
+                }
+                const data = await response.json();
+                setPrompts(data);
+                setFilteredPrompts(data);
+            } catch (error) {
+                console.error('Error fetching prompts:', error);
+                setError('Could not load prompts. Please try again later.');
+            }
+        };
 
-      setPosts(data);
-    }
-
-    fetchPosts();
-  }, [])
+        // Only fetch if no initial prompts are provided (optional refetching)
+        if (!initialPrompts || initialPrompts.length === 0) {
+          fetchPrompts();
+        }
+    }, [initialPrompts]);
 
   return (
     <section className="feed">
@@ -50,7 +72,7 @@ const Feed = () => {
       </form>
 
       <PromptCardList 
-        data={posts}
+        data={filteredPrompts}
         handleTagClick={() => {}}
       />
     </section>

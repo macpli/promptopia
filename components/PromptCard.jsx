@@ -24,18 +24,23 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
     }, 3000);
   }
 
+  const handleProfileClick = () => {
+    if (post.creator._id === session?.user.id) return router.push("/profile");
+  
+    router.push(`/profile/${post.creator._id}?name=${post.creator.username}`);  }
+
   return (
     <div className="prompt_card">
       <div className="flex justify-between items-start gap-5">
         <div className="flex-1 flex justify-start items-center gap-3 cursor-pointer">
-          <Image 
+          <Image onClick={handleProfileClick}
             src={post.creator.image}
             width={40}
             height={40}
             className="rounded-full object-contain"
           />
 
-          <div className="flex flex-col">
+          <div className="flex flex-col" onClick={handleProfileClick}>
             <h3 className="font-satoshi font-semibold text-gray-900">
               {post.creator.username}
             </h3>
@@ -61,7 +66,7 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
 
       <p className="my-4 font-satoshi text-sm text-gray-700">{post.prompt}</p>
       <p className="font-inter text-sm blue_gradient cursor-pointer"
-      onClick={()=> handleTagClick() && handleTagClick(post.tag)}
+      onClick={()=> handleTagClick(post)}
       >{post.tag}</p>
 
       {session?.user.id === post.creator._id && pathName === "/profile" && (

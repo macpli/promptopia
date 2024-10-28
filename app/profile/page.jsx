@@ -8,19 +8,30 @@ import Profile from "@components/Profile";
 
 const MyProfile = () => {
     const router = useRouter();
-    const { data: session } = useSession();
+    const { data: session, status } = useSession();
     const [posts, setPosts] = useState([]);
 
     useEffect(() => {
-        const fetchPosts = async () => {
-          const response = await fetch(`/api/users/${session?.user.id}/posts`);
-          const data = await response.json();
-    
-          setPosts(data);
-        }
-    
-        if(session?.user.id) fetchPosts();
-      }, []);
+      const fetchPosts = async () => {
+          if (session?.user.id) {
+              try {
+                  const response = await fetch(`/api/users/${session.user.id}/posts`);
+                  if (!response.ok) {
+                      throw new Error(`Failed to fetch prompts: ${response.statusText}`);
+                  }
+                  const data = await response.json();
+                  setPosts(data);
+              } catch (error) {
+                  console.error("Error fetching posts:", error);
+              }
+          }
+      };
+
+      // Only fetch posts if the session is not loading
+        if (status === "authenticated") {
+          fetchPosts();
+         }
+  }, [session, status]);
 
     const handleEdit = (post) => {
         router.push(`/update-prompt?id=${post._id}`);

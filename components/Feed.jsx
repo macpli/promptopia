@@ -37,6 +37,15 @@ const Feed = ({ initialPrompts }) => {
         setFilteredPrompts(filtered);
   }
 
+  const handleTagClick = (post) => {
+    setSearchText(post.tag);
+
+    const filtered = prompts.filter((prompt) => 
+      prompt.tag.toLowerCase().includes(post.tag.toLowerCase()) 
+    );
+    setFilteredPrompts(filtered);
+  }
+
   useEffect(() => {
         const fetchPrompts = async () => {
             try {
@@ -73,7 +82,7 @@ const Feed = ({ initialPrompts }) => {
 
       <PromptCardList 
         data={filteredPrompts}
-        handleTagClick={() => {}}
+        handleTagClick={handleTagClick}
       />
     </section>
   )

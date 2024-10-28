@@ -24,6 +24,10 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
     }, 3000);
   }
 
+  const test = () => {
+    console.log(post.tag);
+  }
+
   return (
     <div className="prompt_card">
       <div className="flex justify-between items-start gap-5">
@@ -61,7 +65,7 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
 
       <p className="my-4 font-satoshi text-sm text-gray-700">{post.prompt}</p>
       <p className="font-inter text-sm blue_gradient cursor-pointer"
-      onClick={()=> handleTagClick() && handleTagClick(post.tag)}
+      onClick={()=> handleTagClick(post)}
       >{post.tag}</p>
 
       {session?.user.id === post.creator._id && pathName === "/profile" && (
